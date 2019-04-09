@@ -36,6 +36,16 @@
 		<artifactId>jfinal</artifactId>
 		<version>3.6</version>
 	</dependency>
+	<dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.15</version>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>druid</artifactId>
+      <version>1.0.29</version>
+    </dependency>
   </dependencies>
 
   <build>

@@ -9,6 +9,7 @@ import model.question;
 import com.jfinal.config.*;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.server.undertow.UndertowServer;
 import com.jfinal.template.Engine;
@@ -62,6 +63,7 @@ public class MainConfig extends JFinalConfig {
     	arp.addMapping("participant", participant.class);
     	arp.addMapping("question", question.class);
     	arp.setShowSql(true);
+    	arp.setDialect(new MysqlDialect());
     }
     public void configInterceptor(Interceptors me) {
     	// 此方法用来配置JFinal的全局拦截器，全局拦截器将拦截所有 action 请求，除非使用@Clear在Controller中清除

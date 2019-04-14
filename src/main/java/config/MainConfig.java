@@ -36,14 +36,14 @@ public class MainConfig extends JFinalConfig {
     
     public void configRoute(Routes me) {
     	//此方法用来配置访问路由
-    	me.add("/api/test", TestController.class);
-    	me.add("/api/activity", ActivityController.class);
-    	me.add("/api/admin", AdminController.class);
-    	me.add("/api/entryitem", EntryitemController.class);
-    	me.add("/api/login", LoginController.class);
-    	me.add("/api/organizer", OrganizerController.class);
-    	me.add("/api/participant", ParticipantController.class);
-    	me.add("/api/question", QuestionController.class);
+    	me.add("/test", TestController.class);
+    	me.add("/activity", ActivityController.class);
+    	me.add("/admin", AdminController.class);
+    	me.add("/entryitem", EntryitemController.class);
+    	me.add("/login", LoginController.class);
+    	me.add("/organizer", OrganizerController.class);
+    	me.add("/participant", ParticipantController.class);
+    	me.add("/question", QuestionController.class);
     }
     
     public void configEngine(Engine me) {

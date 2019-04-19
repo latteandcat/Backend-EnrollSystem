@@ -33,7 +33,7 @@ public class LoginController extends Controller{
 			}else{
 				getSession().setAttribute("admin", a);
 				System.out.println("已保存到session,登录成功！");
-				renderJson("{\"status\":\"loginSuccess\",\"name\":\"zsw\",\"role\":\"admin\"}");
+				renderJson("{\"status\":\"loginSuccess\",\"name\":\""+name+"\",\"role\":\"admin\"}");
 			}
 		} 
     }
@@ -95,23 +95,67 @@ public class LoginController extends Controller{
 		String psw = getPara("psw");
 		System.out.println("登陆用户为："+name+"密码为："+psw);
 		String sql = "select * from organizer where name = '" + name + "'";
-		organizer a = organizer.dao.findFirst(sql);
-		if(a==null){
+		organizer o = organizer.dao.findFirst(sql);
+		if(o==null){
 			System.out.println("login failed");
 			renderJson("{\"status\":\"userNotFound\",\"name\":\"\",\"role\":\"\"}");
-		}else if(a!=null){
-			String pswTrue = a.getStr("password");
+		}else if(o!=null){
+			String pswTrue = o.getStr("password");
 			if(checkpassword(psw, pswTrue) == false){
 				System.out.println("password fault");
 				renderJson("{\"status\":\"passwordFault\",\"name\":\"\",\"role\":\"\"}");
 			}else{
-				getSession().setAttribute("admin", a);
+				getSession().setAttribute("organizer", o);
 				System.out.println("已保存到session,登录成功！");
-				renderJson("{\"status\":\"loginSuccess\",\"name\":\"zsw\",\"role\":\"organizer\"}");
+				renderJson("{\"status\":\"loginSuccess\",\"name\":\""+name+"\",\"role\":\"organizer\"}");
 			}
 		} 
     }
-	
+	/*
+	 * organizer注册
+	 * */
+	public void organizerRegister() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		String name = getPara("name");
+		String psw = getPara("psw");
+		String phone = getPara("phone");
+		String pswInSql = EncoderByMd5(psw);
+		List<organizer> os = organizer.dao.find("select * from organizer where name = '"+ name +"'");
+		if(os.isEmpty()){
+			organizer o = getModel(organizer.class);
+			List<organizer> olist = organizer.dao.find("select * from organizer where id in(select max(id) from organizer)");
+			if(olist.size()==0){
+				o.set("id",1);
+			}else{
+				o.set("id",olist.get(0).getInt("id")+1);
+			}
+			o.set("name",name);
+			o.set("password",pswInSql);
+			o.set("phonenumber",phone);
+			o.save();
+			renderJson("{\"status\":\"RegisterSuccess\"}");
+		}else{
+			renderJson("{\"status\":\"AlreadyExist\"}");
+		}
+	}
+	/*
+	 * 获取用户信息
+	 * */
+	public void getUserInfo() {
+		String role = getPara("role");
+		if (role.equals("admin")) {
+			admin a = (model.admin) getSession().getAttribute(role);
+			renderJson("\"phonenumber\":\""+a.getStr("phonenumber")+"\"");
+		} else if (role.equals("participant")) {
+			participant p = (model.participant) getSession().getAttribute(role);
+			renderJson("\"phonenumber\":\""+p.getStr("phonenumber")+"\"");
+		} else if (role.equals("organizer")) {
+			organizer o = (model.organizer) getSession().getAttribute(role);
+			String phone = o.getStr("phonenumber");
+			renderJson("{\"phonenumber\":\""+phone+"\"}");
+		} else {
+			renderJson("{\"phonenumber\":\"\"}");
+		}	
+	}
 	/**利用MD5进行加密
 	 * @param str 待加密的字符串
 	 * @return 加密后的字符串

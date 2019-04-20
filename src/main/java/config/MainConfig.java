@@ -17,11 +17,11 @@ import com.jfinal.template.Engine;
 import controller.ActivityController;
 import controller.AdminController;
 import controller.EntryitemController;
-import controller.LoginController;
 import controller.OrganizerController;
 import controller.ParticipantController;
 import controller.QuestionController;
 import controller.TestController;
+import controller.UserController;
  
 public class MainConfig extends JFinalConfig {
  
@@ -40,7 +40,7 @@ public class MainConfig extends JFinalConfig {
     	me.add("/activity", ActivityController.class);
     	me.add("/admin", AdminController.class);
     	me.add("/entryitem", EntryitemController.class);
-    	me.add("/login", LoginController.class);
+    	me.add("/user", UserController.class);
     	me.add("/organizer", OrganizerController.class);
     	me.add("/participant", ParticipantController.class);
     	me.add("/question", QuestionController.class);

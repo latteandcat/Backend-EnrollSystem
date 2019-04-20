@@ -12,7 +12,7 @@ import model.organizer;
 
 import com.jfinal.core.Controller;
 
-public class LoginController extends Controller{
+public class UserController extends Controller{
 	/*
 	 * 管理员登录
 	 * */
@@ -144,16 +144,118 @@ public class LoginController extends Controller{
 		String role = getPara("role");
 		if (role.equals("admin")) {
 			admin a = (model.admin) getSession().getAttribute(role);
-			renderJson("\"phonenumber\":\""+a.getStr("phonenumber")+"\"");
+			String phone = a.getStr("phonenumber");
+			renderJson("\"phonenumber\":\""+phone+"\"");
 		} else if (role.equals("participant")) {
 			participant p = (model.participant) getSession().getAttribute(role);
-			renderJson("\"phonenumber\":\""+p.getStr("phonenumber")+"\"");
+			String phone = p.getStr("phonenumber");
+			renderJson("\"phonenumber\":\""+phone+"\"");
 		} else if (role.equals("organizer")) {
 			organizer o = (model.organizer) getSession().getAttribute(role);
 			String phone = o.getStr("phonenumber");
 			renderJson("{\"phonenumber\":\""+phone+"\"}");
 		} else {
 			renderJson("{\"phonenumber\":\"\"}");
+		}	
+	}
+	/*
+	 * 用户退出
+	 * */
+	public void logout() {
+		String role = getPara("role");
+		getSession().removeAttribute(role);
+		renderJson("{\"status\":\"success\"}");
+	}
+	/*
+	 * 修改用户密码
+	 * */
+	public void updatepwd() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		String role = getPara("role");
+		String oldpwd = getPara("oldpwd");
+		String newpwd = getPara("newpwd");
+		if (role.equals("admin")) {
+			admin a = (model.admin) getSession().getAttribute(role);
+			if(checkpassword(oldpwd, a.getStr("password"))){
+				a.set("password", EncoderByMd5(newpwd));
+				a.update();
+				renderJson("{\"status\":\"UpdateSuccess\"}");
+			}else{
+				renderJson("{\"status\":\"PwdFault\"}");
+			}
+		} else if (role.equals("participant")) {
+			participant p = (model.participant) getSession().getAttribute(role);
+			if(checkpassword(oldpwd, p.getStr("password"))){
+				p.set("password", EncoderByMd5(newpwd));
+				p.update();
+				renderJson("{\"status\":\"UpdateSuccess\"}");
+			}else{
+				renderJson("{\"status\":\"PwdFault\"}");
+			}
+		} else if (role.equals("organizer")) {
+			organizer o = (model.organizer) getSession().getAttribute(role);
+			if(checkpassword(oldpwd, o.getStr("password"))){
+				o.set("password", EncoderByMd5(newpwd));
+				o.update();
+				renderJson("{\"status\":\"UpdateSuccess\"}");
+			}else{
+				renderJson("{\"status\":\"PwdFault\"}");
+			}
+		} else {
+			renderJson("{\"status\":\"ERROR\"}");
+		}		
+	}
+	/*
+	 * 用户密码忘记时修改
+	 * */
+	public void forgetpwd() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		String role = getPara("role");
+		String newpwd = getPara("newpwd");
+		if (role.equals("admin")) {
+			admin a = (model.admin) getSession().getAttribute(role);
+			a.set("password", EncoderByMd5(newpwd));
+			a.update();
+			renderJson("{\"status\":\"UpdateSuccess\"}");
+		} else if (role.equals("participant")) {
+			participant p = (model.participant) getSession().getAttribute(role);
+			p.set("password", EncoderByMd5(newpwd));
+			p.update();
+			renderJson("{\"status\":\"UpdateSuccess\"}");
+		} else if (role.equals("organizer")) {
+			organizer o = (model.organizer) getSession().getAttribute(role);
+			o.set("password", EncoderByMd5(newpwd));
+			o.update();
+			renderJson("{\"status\":\"UpdateSuccess\"}");
+		} else {
+			renderJson("{\"status\":\"ERROR\"}");
+		}		
+	}
+	/*
+	 * 修改用户信息
+	 * */
+	public void updateprofile() {
+		String role = getPara("role");
+		String newname = getPara("newname");
+		String newphone = getPara("newphone");
+		if (role.equals("admin")) {
+			admin a = (model.admin) getSession().getAttribute(role);
+			a.set("name", newname);
+			a.set("phonenumber", newphone);
+			a.update();
+			renderJson("{\"status\":\"UpdateSuccess\"}");
+		} else if (role.equals("participant")) {
+			participant p = (model.participant) getSession().getAttribute(role);
+			p.set("name", newname);
+			p.set("phonenumber", newphone);
+			p.update();
+			renderJson("{\"status\":\"UpdateSuccess\"}");
+		} else if (role.equals("organizer")) {
+			organizer o = (model.organizer) getSession().getAttribute(role);
+			o.set("name", newname);
+			o.set("phonenumber", newphone);
+			o.update();
+			renderJson("{\"status\":\"UpdateSuccess\"}");
+		} else {
+			renderJson("{\"status\":\"ERROR\"}");
 		}	
 	}
 	/**利用MD5进行加密

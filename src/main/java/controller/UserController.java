@@ -145,11 +145,11 @@ public class UserController extends Controller{
 		if (role.equals("admin")) {
 			admin a = (model.admin) getSession().getAttribute(role);
 			String phone = a.getStr("phonenumber");
-			renderJson("\"phonenumber\":\""+phone+"\"");
+			renderJson("{\"phonenumber\":\""+phone+"\"}");
 		} else if (role.equals("participant")) {
 			participant p = (model.participant) getSession().getAttribute(role);
 			String phone = p.getStr("phonenumber");
-			renderJson("\"phonenumber\":\""+phone+"\"");
+			renderJson("{\"phonenumber\":\""+phone+"\"}");
 		} else if (role.equals("organizer")) {
 			organizer o = (model.organizer) getSession().getAttribute(role);
 			String phone = o.getStr("phonenumber");

@@ -31,8 +31,6 @@ public class UserController extends Controller{
 				System.out.println("password fault");
 				renderJson("{\"status\":\"passwordFault\",\"name\":\"\",\"role\":\"\"}");
 			}else{
-				getSession().setAttribute("admin", a);
-				System.out.println("已保存到session,登录成功！");
 				renderJson("{\"status\":\"loginSuccess\",\"name\":\""+name+"\",\"role\":\"admin\"}");
 			}
 		} 
@@ -55,8 +53,6 @@ public class UserController extends Controller{
 				System.out.println("password fault");
 				renderJson("{\"status\":\"passwordFault\",\"name\":\"\",\"role\":\"\"}");
 			}else{
-				getSession().setAttribute("participant", p);
-				System.out.println("已保存到session,登录成功！");
 				renderJson("{\"status\":\"loginSuccess\",\"name\":\""+name+"\",\"role\":\"participant\"}");
 			}
 		} 
@@ -105,8 +101,6 @@ public class UserController extends Controller{
 				System.out.println("password fault");
 				renderJson("{\"status\":\"passwordFault\",\"name\":\"\",\"role\":\"\"}");
 			}else{
-				getSession().setAttribute("organizer", o);
-				System.out.println("已保存到session,登录成功！");
 				renderJson("{\"status\":\"loginSuccess\",\"name\":\""+name+"\",\"role\":\"organizer\"}");
 			}
 		} 
@@ -141,17 +135,19 @@ public class UserController extends Controller{
 	 * 获取用户信息
 	 * */
 	public void getUserInfo() {
+		String name = getPara("name");
 		String role = getPara("role");
+		String sql = "select * from " + role + " where name = '" + name + "'";
 		if (role.equals("admin")) {
-			admin a = (model.admin) getSession().getAttribute(role);
+			admin a = admin.dao.findFirst(sql);
 			String phone = a.getStr("phonenumber");
 			renderJson("{\"phonenumber\":\""+phone+"\"}");
 		} else if (role.equals("participant")) {
-			participant p = (model.participant) getSession().getAttribute(role);
+			participant p = participant.dao.findFirst(sql);
 			String phone = p.getStr("phonenumber");
 			renderJson("{\"phonenumber\":\""+phone+"\"}");
 		} else if (role.equals("organizer")) {
-			organizer o = (model.organizer) getSession().getAttribute(role);
+			organizer o = organizer.dao.findFirst(sql);
 			String phone = o.getStr("phonenumber");
 			renderJson("{\"phonenumber\":\""+phone+"\"}");
 		} else {
@@ -159,22 +155,16 @@ public class UserController extends Controller{
 		}	
 	}
 	/*
-	 * 用户退出
-	 * */
-	public void logout() {
-		String role = getPara("role");
-		getSession().removeAttribute(role);
-		renderJson("{\"status\":\"success\"}");
-	}
-	/*
 	 * 修改用户密码
 	 * */
 	public void updatepwd() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		String name = getPara("name");
 		String role = getPara("role");
 		String oldpwd = getPara("oldpwd");
 		String newpwd = getPara("newpwd");
+		String sql = "select * from " + role + " where name = '" + name + "'";
 		if (role.equals("admin")) {
-			admin a = (model.admin) getSession().getAttribute(role);
+			admin a = admin.dao.findFirst(sql);
 			if(checkpassword(oldpwd, a.getStr("password"))){
 				a.set("password", EncoderByMd5(newpwd));
 				a.update();
@@ -183,7 +173,7 @@ public class UserController extends Controller{
 				renderJson("{\"status\":\"PwdFault\"}");
 			}
 		} else if (role.equals("participant")) {
-			participant p = (model.participant) getSession().getAttribute(role);
+			participant p = participant.dao.findFirst(sql);
 			if(checkpassword(oldpwd, p.getStr("password"))){
 				p.set("password", EncoderByMd5(newpwd));
 				p.update();
@@ -192,7 +182,7 @@ public class UserController extends Controller{
 				renderJson("{\"status\":\"PwdFault\"}");
 			}
 		} else if (role.equals("organizer")) {
-			organizer o = (model.organizer) getSession().getAttribute(role);
+			organizer o = organizer.dao.findFirst(sql);
 			if(checkpassword(oldpwd, o.getStr("password"))){
 				o.set("password", EncoderByMd5(newpwd));
 				o.update();
@@ -208,20 +198,22 @@ public class UserController extends Controller{
 	 * 用户密码忘记时修改
 	 * */
 	public void forgetpwd() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		String name = getPara("name");
 		String role = getPara("role");
 		String newpwd = getPara("newpwd");
+		String sql = "select * from " + role + " where name = '" + name + "'";
 		if (role.equals("admin")) {
-			admin a = (model.admin) getSession().getAttribute(role);
+			admin a = admin.dao.findFirst(sql);
 			a.set("password", EncoderByMd5(newpwd));
 			a.update();
 			renderJson("{\"status\":\"UpdateSuccess\"}");
 		} else if (role.equals("participant")) {
-			participant p = (model.participant) getSession().getAttribute(role);
+			participant p = participant.dao.findFirst(sql);
 			p.set("password", EncoderByMd5(newpwd));
 			p.update();
 			renderJson("{\"status\":\"UpdateSuccess\"}");
 		} else if (role.equals("organizer")) {
-			organizer o = (model.organizer) getSession().getAttribute(role);
+			organizer o = organizer.dao.findFirst(sql);
 			o.set("password", EncoderByMd5(newpwd));
 			o.update();
 			renderJson("{\"status\":\"UpdateSuccess\"}");
@@ -233,23 +225,25 @@ public class UserController extends Controller{
 	 * 修改用户信息
 	 * */
 	public void updateprofile() {
+		String name = getPara("name");
 		String role = getPara("role");
 		String newname = getPara("newname");
 		String newphone = getPara("newphone");
+		String sql = "select * from " + role + " where name = '" + name + "'";
 		if (role.equals("admin")) {
-			admin a = (model.admin) getSession().getAttribute(role);
+			admin a = admin.dao.findFirst(sql);
 			a.set("name", newname);
 			a.set("phonenumber", newphone);
 			a.update();
 			renderJson("{\"status\":\"UpdateSuccess\"}");
 		} else if (role.equals("participant")) {
-			participant p = (model.participant) getSession().getAttribute(role);
+			participant p = participant.dao.findFirst(sql);
 			p.set("name", newname);
 			p.set("phonenumber", newphone);
 			p.update();
 			renderJson("{\"status\":\"UpdateSuccess\"}");
 		} else if (role.equals("organizer")) {
-			organizer o = (model.organizer) getSession().getAttribute(role);
+			organizer o = organizer.dao.findFirst(sql);
 			o.set("name", newname);
 			o.set("phonenumber", newphone);
 			o.update();

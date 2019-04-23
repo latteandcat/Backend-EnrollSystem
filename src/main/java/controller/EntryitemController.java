@@ -2,7 +2,6 @@ package controller;
 
 import java.util.Arrays;
 import java.util.List;
-
 import model.entryitem;
 
 import com.jfinal.core.Controller;
@@ -22,7 +21,6 @@ public class EntryitemController extends Controller{
 		String reminder = getPara("reminder");
 		String creator = getPara("creator");
 		int length = getParaToInt("length");
-		System.out.println(length);
 		String options[] = new String[length];
 		for (int i = 0; i < options.length; i++) {
 			options[i] = getPara("options["+i+"]");
@@ -56,10 +54,36 @@ public class EntryitemController extends Controller{
 			renderJson("{\"status\":\"alreadyExist\"}");
 		}
 	}
+	// 根据名称查询报名项
 	public void searchItemByName(){
 		String name = getPara("name");
 		String creator = getPara("creator");
 		List<entryitem> entryitems = entryitem.dao.find("select * from entryitem where name = '"+name+"'and creator = '"+creator+"'");
 		renderJson(entryitems);
+	}
+	// 更新报名项
+	public void updateEntryItem(){
+		int id = getParaToInt("id");
+		String name = getPara("name");
+		String isrequired = getPara("isrequired");
+		String reminder = getPara("reminder");
+		int length = getParaToInt("length");
+		String options[] = new String[length];
+		for (int i = 0; i < options.length; i++) {
+			options[i] = getPara("options["+i+"]");
+		}
+		String optionsStr = String.join(",",options);
+		entryitem ei = entryitem.dao.findById(id);
+		ei.set("name",name);
+		ei.set("isrequired",isrequired);
+		ei.set("reminder",reminder);
+		ei.set("options",optionsStr);
+		ei.update();
+		renderJson("{\"status\":\"updateSuccess\"}");
+	}
+	// 删除报名项
+	public void deleteEntryItem(){
+		entryitem.dao.deleteById(getParaToInt("id"));
+		renderJson("{\"status\":\"deleteSuccess\"}");
 	}
 }

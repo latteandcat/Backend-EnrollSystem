@@ -1,7 +1,8 @@
 package controller;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+
 import model.entryitem;
 
 import com.jfinal.core.Controller;
@@ -12,6 +13,10 @@ public class EntryitemController extends Controller{
 		String name = getPara("name");
 		List<entryitem> myEntryItems = entryitem.dao.find("select * from entryitem where creator = '"+name+"'");
 		renderJson(myEntryItems);
+	}
+	public void systemEntryItems() {
+		List<entryitem> systemEntryItems = entryitem.dao.find("select * from entryitem where creator = 'system'");
+		renderJson(systemEntryItems);
 	}
 	//添加自定义报名项
 	public void addEntryItem() {
@@ -85,5 +90,16 @@ public class EntryitemController extends Controller{
 	public void deleteEntryItem(){
 		entryitem.dao.deleteById(getParaToInt("id"));
 		renderJson("{\"status\":\"deleteSuccess\"}");
+	}
+	public void getEntryItemsOfActivity() {
+		String entryformStr = getPara("entryformStr");
+		String[] entryitems= entryformStr.split(",");
+		List<entryitem> entryform = new ArrayList<entryitem>();
+		for (int i = 0; i < entryitems.length; i++) {
+			entryitem e = entryitem.dao.findById(Integer.parseInt(entryitems[i]));
+			System.out.println(e.getStr("id"));
+			entryform.add(e);
+		}
+		renderJson(entryform);
 	}
 }

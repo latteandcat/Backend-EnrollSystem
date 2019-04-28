@@ -14,6 +14,7 @@ public class EntryitemController extends Controller{
 		List<entryitem> myEntryItems = entryitem.dao.find("select * from entryitem where creator = '"+name+"'");
 		renderJson(myEntryItems);
 	}
+	//系统报名项的获取
 	public void systemEntryItems() {
 		List<entryitem> systemEntryItems = entryitem.dao.find("select * from entryitem where creator = 'system'");
 		renderJson(systemEntryItems);
@@ -91,6 +92,7 @@ public class EntryitemController extends Controller{
 		entryitem.dao.deleteById(getParaToInt("id"));
 		renderJson("{\"status\":\"deleteSuccess\"}");
 	}
+	//获取活动的报名项list
 	public void getEntryItemsOfActivity() {
 		String entryformStr = getPara("entryformStr");
 		String[] entryitems= entryformStr.split(",");

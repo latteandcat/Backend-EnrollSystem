@@ -52,6 +52,7 @@ public class ActivityController extends Controller {
 	}
 	//发起活动
 	public void addActivity() throws ParseException {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String name = getPara("name");
 		String organizer = getPara("organizer");
 		String organization = getPara("organization");
@@ -86,6 +87,7 @@ public class ActivityController extends Controller {
 			a.set("entryform", entryform);
 			a.set("isapproved", "tobeaudit");
 			a.set("isfinished", "unfinished");
+			a.set("submittime", df.format(new Date()));
 			a.save();
 			renderJson("{\"status\":\"addSuccess\"}");
 		}else{
@@ -94,6 +96,7 @@ public class ActivityController extends Controller {
 	}
 	//更新活动信息
 	public void updateActivity() throws ParseException{
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		int id = getParaToInt("id");
 		String name = getPara("name");
 		String organization = getPara("organization");
@@ -117,6 +120,7 @@ public class ActivityController extends Controller {
 		a.set("site", site);
 		a.set("detail", detail);
 		a.set("entryform", entryform);
+		a.set("submittime", df.format(new Date()));
 		a.update();
 		renderJson("{\"status\":\"updateSuccess\"}");
 	}

@@ -60,11 +60,17 @@ public class EntryitemController extends Controller{
 			renderJson("{\"status\":\"alreadyExist\"}");
 		}
 	}
-	// 根据名称查询报名项
-	public void searchItemByName(){
+	// 根据类型和名称查询报名项
+	public void searchItem(){
 		String name = getPara("name");
 		String creator = getPara("creator");
-		List<entryitem> entryitems = entryitem.dao.find("select * from entryitem where name = '"+name+"'and creator = '"+creator+"'");
+		String type = getPara("type");
+		List<entryitem> entryitems = new ArrayList<entryitem>();
+		if(type.equals("所有类型")){
+			entryitems = entryitem.dao.find("select * from entryitem where name = '"+name+"'and creator = '"+creator+"'");
+		}else{
+			entryitems = entryitem.dao.find("select * from entryitem where name = '"+name+"'and creator = '"+creator+"' and type = '"+type+"'");
+		}
 		renderJson(entryitems);
 	}
 	// 更新报名项

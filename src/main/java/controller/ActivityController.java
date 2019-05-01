@@ -2,6 +2,7 @@ package controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +12,12 @@ import model.entryitem;
 import com.jfinal.core.Controller;
 
 public class ActivityController extends Controller {
-	//获取未审核活动的list
+	//获取所有待审核活动的list
+	public void getAllUnauditActivities(){
+		List<activity> unauditActivities = activity.dao.find("select * from activity where  isapproved = 'tobeaudit'");
+		renderJson(unauditActivities);
+	}
+	//获取未审核活动和审核失败的list
 	public void getUnauditActivities(){
 		String name = getPara("name");
 		List<activity> unauditActivities = activity.dao.find("select * from activity where organizer = '"+name+"' and isapproved != 'passed'");
@@ -33,7 +39,12 @@ public class ActivityController extends Controller {
 	public void searchUnauditActivities(){
 		String name = getPara("name");
 		String organizer = getPara("organizer");
-		List<activity> searchResults = activity.dao.find("select * from activity where name = '"+name+"' and organizer = '"+organizer+"' ");
+		List<activity> searchResults = new ArrayList<activity>();
+		if(organizer.equals("")){
+			searchResults = activity.dao.find("select * from activity where name = '"+name+"'");
+		}else{
+			searchResults = activity.dao.find("select * from activity where name = '"+name+"' and organizer = '"+organizer+"' ");
+		}
 		renderJson(searchResults);
 	}
 	//根据活动名称查询未完成活动
@@ -137,5 +148,22 @@ public class ActivityController extends Controller {
 		Date date = simpleDateFormat1.parse(d);
 		d = simpleDateFormat2.format(date);
 		return d;
+	}
+	//通过活动审核的方法
+	public void passActivity(){
+		int id = getParaToInt("id");
+		activity a = activity.dao.findById(id);
+		a.set("isapproved", "passed");
+		a.update();
+		renderJson("{\"status\":\"passSuccess\"}");
+	}
+	//不通过活动审核的方法
+	public void unpassActivity(){
+		int id = getParaToInt("id");
+		String reason = getPara("reason");
+		activity a = activity.dao.findById(id);
+		a.set("isapproved", reason);
+		a.update();
+		renderJson("{\"status\":\"unpassSuccess\"}");
 	}
 }

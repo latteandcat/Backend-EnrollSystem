@@ -26,13 +26,13 @@ public class ActivityController extends Controller {
 	//获取未完成活动的list
 	public void getUnfinishedActivities(){
 		String name = getPara("name");
-		List<activity> unfinishedActivities = activity.dao.find("select * from activity where organizer = '"+name+"' and isapproved = 'passed' and isfinished = 'unfinished'");
+		List<activity> unfinishedActivities = activity.dao.find("select * from activity where organizer = '"+name+"' and isapproved = 'passed' and isarchived = 'unarchived'");
 		renderJson(unfinishedActivities);
 	}
 	//获取已完成活动的list
 	public void getFinishedActivities(){
 		String name = getPara("name");
-		List<activity> finishedActivities = activity.dao.find("select * from activity where organizer = '"+name+"' and isapproved = 'passed' and isfinished = 'finished'");
+		List<activity> finishedActivities = activity.dao.find("select * from activity where organizer = '"+name+"' and isapproved = 'passed' and isarchived = 'archived'");
 		renderJson(finishedActivities);
 	}
 	//根据活动名称查询未审核活动
@@ -72,6 +72,7 @@ public class ActivityController extends Controller {
 		String deadline= getPara("deadline");
 		String site= getPara("site");
 		String detail= getPara("detail");
+		String isneedaudit = getPara("isneedaudit");
 		int length = getParaToInt("length");
 		String entryitems[] = new String[length];
 		for (int i = 0; i < entryitems.length; i++) {
@@ -95,9 +96,10 @@ public class ActivityController extends Controller {
 			a.set("deadline", parseDate(deadline));
 			a.set("site", site);
 			a.set("detail", detail);
+			a.set("isneedaudit", isneedaudit);
 			a.set("entryform", entryform);
 			a.set("isapproved", "tobeaudit");
-			a.set("isfinished", "unfinished");
+			a.set("isarchived", "unarchived");
 			a.set("submittime", df.format(new Date()));
 			a.save();
 			renderJson("{\"status\":\"addSuccess\"}");
@@ -116,6 +118,7 @@ public class ActivityController extends Controller {
 		String deadline= getPara("deadline");
 		String site= getPara("site");
 		String detail= getPara("detail");
+		String isneedaudit = getPara("isneedaudit");
 		int length = getParaToInt("length");
 		String entryitems[] = new String[length];
 		for (int i = 0; i < entryitems.length; i++) {
@@ -130,6 +133,7 @@ public class ActivityController extends Controller {
 		a.set("deadline", parseDate(deadline));
 		a.set("site", site);
 		a.set("detail", detail);
+		a.set("isneedaudit", isneedaudit);
 		a.set("entryform", entryform);
 		a.set("submittime", df.format(new Date()));
 		a.update();
@@ -165,5 +169,15 @@ public class ActivityController extends Controller {
 		a.set("isapproved", reason);
 		a.update();
 		renderJson("{\"status\":\"unpassSuccess\"}");
+	}
+	//申请重新审核的方法
+	public void reauditActivity(){
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		int id = getParaToInt("id");
+		activity a = activity.dao.findById(id);
+		a.set("isapproved", "tobeaudit");
+		a.set("submittime", df.format(new Date()));
+		a.update();
+		renderJson("{\"status\":\"reauditSuccess\"}");
 	}
 }

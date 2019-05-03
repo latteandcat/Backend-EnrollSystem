@@ -1,9 +1,12 @@
 package config;
 import model.activity;
 import model.admin;
+import model.entryform_audit;
 import model.entryitem;
 import model.organizer;
+import model.organizer_notification;
 import model.participant;
+import model.participant_notification;
 import model.question;
 
 import com.jfinal.config.*;
@@ -15,12 +18,10 @@ import com.jfinal.server.undertow.UndertowServer;
 import com.jfinal.template.Engine;
 
 import controller.ActivityController;
-import controller.AdminController;
+import controller.EntryformauditController;
 import controller.EntryitemController;
-import controller.OrganizerController;
-import controller.ParticipantController;
+import controller.NotificationController;
 import controller.QuestionController;
-import controller.TestController;
 import controller.UserController;
  
 public class MainConfig extends JFinalConfig {
@@ -36,14 +37,12 @@ public class MainConfig extends JFinalConfig {
     
     public void configRoute(Routes me) {
     	//此方法用来配置访问路由
-    	me.add("/test", TestController.class);
     	me.add("/activity", ActivityController.class);
-    	me.add("/admin", AdminController.class);
     	me.add("/entryitem", EntryitemController.class);
     	me.add("/user", UserController.class);
-    	me.add("/organizer", OrganizerController.class);
-    	me.add("/participant", ParticipantController.class);
     	me.add("/question", QuestionController.class);
+    	me.add("/notification", NotificationController.class);
+    	me.add("/entryformaudit", EntryformauditController.class);
     }
     
     public void configEngine(Engine me) {
@@ -62,6 +61,9 @@ public class MainConfig extends JFinalConfig {
     	arp.addMapping("organizer", organizer.class);
     	arp.addMapping("participant", participant.class);
     	arp.addMapping("question", question.class);
+    	arp.addMapping("entryform_audit", entryform_audit.class);
+    	arp.addMapping("organizer_notification", organizer_notification.class);
+    	arp.addMapping("participant_notification", participant_notification.class);
     	arp.setShowSql(true);
     	arp.setDialect(new MysqlDialect());
     }

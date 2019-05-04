@@ -67,9 +67,9 @@ public class EntryitemController extends Controller{
 		String type = getPara("type");
 		List<entryitem> entryitems = new ArrayList<entryitem>();
 		if(type.equals("所有类型")){
-			entryitems = entryitem.dao.find("select * from entryitem where name = '"+name+"'and creator = '"+creator+"'");
+			entryitems = entryitem.dao.find("select * from entryitem where name like '%"+name+"%'and creator = '"+creator+"'");
 		}else{
-			entryitems = entryitem.dao.find("select * from entryitem where name = '"+name+"'and creator = '"+creator+"' and type = '"+type+"'");
+			entryitems = entryitem.dao.find("select * from entryitem where name like '%"+name+"%'and creator = '"+creator+"' and type = '"+type+"'");
 		}
 		renderJson(entryitems);
 	}

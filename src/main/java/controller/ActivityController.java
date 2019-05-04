@@ -35,30 +35,46 @@ public class ActivityController extends Controller {
 		List<activity> finishedActivities = activity.dao.find("select * from activity where organizer = '"+name+"' and isapproved = 'passed' and isarchived = 'archived'");
 		renderJson(finishedActivities);
 	}
-	//根据活动名称查询未审核活动
+	//获取所有可报名的活动 today < deadline
+	public void getCouldSignupActivity(){
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String now = df.format(new Date());
+		List<activity> res = activity.dao.find("select * from activity where deadline > '"+now+"' and isapproved = 'passed' order by deadline desc");
+		renderJson(res);
+	}
+	//条件查询可报名的活动
+	public void searchCouldSignupActivity(){
+		String select = getPara("select");
+		String value = getPara("value");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String now = df.format(new Date());
+		List<activity> res = activity.dao.find("select * from activity where deadline > '"+now+"' and isapproved = 'passed' and "+select+" like '%"+value+"%' order by deadline desc");
+		renderJson(res);
+	}
+	//根据活动名称查询未审核活动和审核失败活动
 	public void searchUnauditActivities(){
 		String name = getPara("name");
 		String organizer = getPara("organizer");
 		List<activity> searchResults = new ArrayList<activity>();
 		if(organizer.equals("")){
-			searchResults = activity.dao.find("select * from activity where name = '"+name+"'");
+			searchResults = activity.dao.find("select * from activity where name like '%"+name+"%' and isapproved != 'passed'");
 		}else{
-			searchResults = activity.dao.find("select * from activity where name = '"+name+"' and organizer = '"+organizer+"' ");
+			searchResults = activity.dao.find("select * from activity where name like '%"+name+"%' and organizer = '"+organizer+"' and isapproved != 'passed'");
 		}
 		renderJson(searchResults);
 	}
-	//根据活动名称查询未完成活动
+	//根据活动名称查询未归档活动
 	public void searchUnfinishedActivities(){
 		String name = getPara("name");
 		String organizer = getPara("organizer");
-		List<activity> searchResults = activity.dao.find("select * from activity where name = '"+name+"' and organizer = '"+organizer+"' ");
+		List<activity> searchResults = activity.dao.find("select * from activity where name like '%"+name+"%' and organizer = '"+organizer+"' and isarchived = 'unarchived' and isapproved = 'passed'");
 		renderJson(searchResults);
 	}
-	//根据活动名称查询已完成活动
+	//根据活动名称查询已归档活动
 	public void searchFinishedActivities(){
 		String name = getPara("name");
 		String organizer = getPara("organizer");
-		List<activity> searchResults = activity.dao.find("select * from activity where name = '"+name+"' and organizer = '"+organizer+"' ");
+		List<activity> searchResults = activity.dao.find("select * from activity where name like '%"+name+"%' and organizer = '"+organizer+"' and isarchived = 'archived' and isapproved = 'passed'");
 		renderJson(searchResults);
 	}
 	//发起活动

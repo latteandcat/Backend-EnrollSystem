@@ -60,13 +60,13 @@ public class NotificationController extends Controller{
 	//获取某组织者的未读通知
 	public void unreadnotiOfOrganizer(){
 		String name = getPara("name");
-		List<organizer_notification> results = organizer_notification.dao.find("select * from organizer_notification where receiver = '"+name+"' and hasread = 'no' ");
+		List<organizer_notification> results = organizer_notification.dao.find("select * from organizer_notification where receiver = '"+name+"' and hasread = 'no' order by createtime desc");
 		renderJson(results);
 	}
 	//获取某组织者的已读通知
 	public void hasreadnotiOfOrganizer(){
 		String name = getPara("name");
-		List<organizer_notification> results = organizer_notification.dao.find("select * from organizer_notification where receiver = '"+name+"' and hasread = 'yes' ");
+		List<organizer_notification> results = organizer_notification.dao.find("select * from organizer_notification where receiver = '"+name+"' and hasread = 'yes' order by createtime desc");
 		renderJson(results);
 	}
 	//删除已读通知

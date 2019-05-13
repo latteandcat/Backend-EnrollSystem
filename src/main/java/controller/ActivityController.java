@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import model.activity;
+import model.entryform_audit;
 import model.entryitem;
 
 import com.jfinal.core.Controller;
@@ -20,7 +21,9 @@ public class ActivityController extends Controller {
 	//获取未审核活动和审核失败的list
 	public void getUnauditActivities(){
 		String name = getPara("name");
-		List<activity> unauditActivities = activity.dao.find("select * from activity where organizer = '"+name+"' and isapproved != 'passed'");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String now = df.format(new Date());
+		List<activity> unauditActivities = activity.dao.find("select * from activity where organizer = '"+name+"' and isapproved != 'passed' order by submittime desc");
 		renderJson(unauditActivities);
 	}
 	//获取未完成活动的list

@@ -11,6 +11,7 @@ import model.entryitem;
 import com.jfinal.core.Controller;
 
 public class EntryformauditController extends Controller{
+	// 报名活动
 	public void signupActivity(){
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		int aid = getParaToInt("aid");
@@ -30,7 +31,7 @@ public class EntryformauditController extends Controller{
 				for (int j = 0; j < options.length; j++) {
 					checked[j] = getPara(e.getStr("name")+"["+j+"]");
 				}
-				value[i] = String.join("-",checked);
+				value[i] = String.join("-",checked).replace("-null", "").replace("null", "");
 			}else{
 				value[i] = getPara(e.getStr("name"));
 			}
@@ -63,16 +64,40 @@ public class EntryformauditController extends Controller{
 			renderJson("{\"status\":\"alreadySignup\"}");
 		}
 	}
+	// 获取组织者的报名审核
 	public void getAuditOfOrganizer(){
 		String name = getPara("name");
 		List<entryform_audit> res = entryform_audit.dao.find("select * from entryform_audit where organizer = '"+name+"' and status = 'tobeAudit' order by submittime desc");
 		renderJson(res);
 	}
+	// 搜索组织者的报名审核
 	public void searchAudit(){
 		String organizer = getPara("organizer");
 		String type = getPara("type");
 		String value = getPara("value");
 		List<entryform_audit> res = entryform_audit.dao.find("select * from entryform_audit where organizer = '"+organizer+"' and "+type+" like '%"+value+"%' and status = 'tobeAudit' order by submittime desc");
+		renderJson(res);
+	}
+	//通过报名审核的方法
+	public void passSignup(){
+		int id = getParaToInt("id");
+		entryform_audit a = entryform_audit.dao.findById(id);
+		a.set("status", "passed");
+		a.update();
+		renderJson("{\"status\":\"passSuccess\"}");
+	}
+	//不通过报名审核的方法
+	public void unpassSignup(){
+		int id = getParaToInt("id");
+		String reason = getPara("reason");
+		entryform_audit a = entryform_audit.dao.findById(id);
+		a.set("status", reason);
+		a.update();
+		renderJson("{\"status\":\"unpassSuccess\"}");
+	}
+	public void getAuditOfParticipant(){
+		String name = getPara("name");
+		List<entryform_audit> res = entryform_audit.dao.find("select * from entryform_audit where participant = '"+name+"' order by submittime desc");
 		renderJson(res);
 	}
 }

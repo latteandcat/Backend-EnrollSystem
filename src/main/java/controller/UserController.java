@@ -131,6 +131,52 @@ public class UserController extends Controller{
 			renderJson("{\"status\":\"AlreadyExist\"}");
 		}
 	}
+	public void adminList(){
+		List<admin> res= admin.dao.find("select * from admin where name != '安小狐SA'");
+		renderJson(res);
+	}
+	public void addAdmin() throws NoSuchAlgorithmException, UnsupportedEncodingException{
+		String name = getPara("name");
+		String phone = getPara("phonenumber");
+		String password = getPara("password");
+		List<admin> ads = admin.dao.find("select * from admin where name = '"+ name +"'");
+		if(ads.isEmpty()){
+			admin a = getModel(admin.class);
+			List<admin> alist = admin.dao.find("select * from admin where id in(select max(id) from admin)");
+			if(alist.size()==0){
+				a.set("id",1);
+			}else{
+				a.set("id",alist.get(0).getInt("id")+1);
+			}
+			a.set("name",name);
+			a.set("password",EncoderByMd5(password));
+			a.set("phonenumber",phone);
+			a.save();
+			renderJson("{\"status\":\"addSuccess\"}");
+		}else{
+			renderJson("{\"status\":\"alreadyExist\"}");
+		}
+	}
+	public void updateAdmin(){
+		int id = getParaToInt("id");
+		String name = getPara("name");
+		String phone = getPara("phonenumber");
+		admin a = admin.dao.findById(id);
+		a.set("name", name);
+		a.set("phonenumber",phone);
+		a.update();
+		renderJson("{\"status\":\"updateSuccess\"}");
+	}
+	public void searchAdmin(){
+		String name = getPara("name");
+		List<admin> ads = admin.dao.find("select * from admin where name like '%"+ name +"%' and name != '安小狐SA'");
+		renderJson(ads);
+	}
+	public void deleteAdmin(){
+		int id = getParaToInt("id");
+		admin.dao.deleteById(id);
+		renderJson("{\"status\":\"deleteSuccess\"}");
+	}
 	/*
 	 * 获取用户信息
 	 * */
@@ -195,7 +241,7 @@ public class UserController extends Controller{
 		}		
 	}
 	/*
-	 * 用户密码忘记时修改
+	 * 登陆后用户密码忘记时修改
 	 * */
 	public void forgetpwd() throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		String name = getPara("name");
@@ -220,6 +266,100 @@ public class UserController extends Controller{
 		} else {
 			renderJson("{\"status\":\"ERROR\"}");
 		}		
+	}
+	/*
+	 * 登陆前用户密码忘记时修改
+	 * */
+	public void forgetPwdBeforeLogin() throws NoSuchAlgorithmException, UnsupportedEncodingException{
+		String name = getPara("username");
+		String role = getPara("userrole");
+		String phone = getPara("phone");
+		String newpwd = getPara("newpwd");
+		String sql = "select * from " + role + " where name = '" + name + "'";
+		if (role.equals("admin")) {
+			List<admin> userlist = admin.dao.find(sql);
+			if(userlist.isEmpty()){
+				renderJson("{\"status\":\"userNotFound\"}");
+			}else{
+				admin a = admin.dao.findFirst(sql);
+				if(a.getStr("phonenumber").equals(phone)){
+					a.set("password", EncoderByMd5(newpwd));
+					a.update();
+					renderJson("{\"status\":\"UpdateSuccess\"}");
+				}else{
+					renderJson("{\"status\":\"validateFalse\"}");
+				}
+			}
+		} else if (role.equals("participant")) {
+			List<participant> userlist = participant.dao.find(sql);
+			if(userlist.isEmpty()){
+				renderJson("{\"status\":\"userNotFound\"}");
+			}else{
+				participant p = participant.dao.findFirst(sql);
+				if(p.getStr("phonenumber").equals(phone)){
+					p.set("password", EncoderByMd5(newpwd));
+					p.update();
+					renderJson("{\"status\":\"UpdateSuccess\"}");
+				}else{
+					renderJson("{\"status\":\"validateFalse\"}");
+				}
+			}
+		} else if (role.equals("organizer")) {
+			List<organizer> userlist = organizer.dao.find(sql);
+			if(userlist.isEmpty()){
+				renderJson("{\"status\":\"userNotFound\"}");
+			}else{
+				organizer o = organizer.dao.findFirst(sql);
+				if(o.getStr("phonenumber").equals(phone)){
+					o.set("password", EncoderByMd5(newpwd));
+					o.update();
+					renderJson("{\"status\":\"UpdateSuccess\"}");
+				}else{
+					renderJson("{\"status\":\"validateFalse\"}");
+				}
+			}
+		} else {
+			renderJson("{\"status\":\"ERROR\"}");
+		}		
+	}
+	public void changeUserpwd() throws NoSuchAlgorithmException, UnsupportedEncodingException{
+		String name = getPara("name");
+		String role = getPara("role");
+		String newpwd = getPara("pwd");
+		String sql = "select * from " + role + " where name = '" + name + "'";
+		if (role.equals("admin")) {
+			List<admin> userlist = admin.dao.find(sql);
+			if(userlist.isEmpty()){
+				renderJson("{\"status\":\"userNotFound\"}");
+			}else{
+				admin a = admin.dao.findFirst(sql);
+				a.set("password", EncoderByMd5(newpwd));
+				a.update();
+				renderJson("{\"status\":\"changeSuccess\"}");
+			}
+		} else if (role.equals("participant")) {
+			List<participant> userlist = participant.dao.find(sql);
+			if(userlist.isEmpty()){
+				renderJson("{\"status\":\"userNotFound\"}");
+			}else{
+				participant p = participant.dao.findFirst(sql);
+				p.set("password", EncoderByMd5(newpwd));
+				p.update();
+				renderJson("{\"status\":\"changeSuccess\"}");
+			}
+		} else if (role.equals("organizer")) {
+			List<organizer> userlist = organizer.dao.find(sql);
+			if(userlist.isEmpty()){
+				renderJson("{\"status\":\"userNotFound\"}");
+			}else{
+				organizer o = organizer.dao.findFirst(sql);
+				o.set("password", EncoderByMd5(newpwd));
+				o.update();
+				renderJson("{\"status\":\"changeSuccess\"}");
+			}
+		} else {
+			renderJson("{\"status\":\"ERROR\"}");
+		}
 	}
 	/*
 	 * 修改用户信息

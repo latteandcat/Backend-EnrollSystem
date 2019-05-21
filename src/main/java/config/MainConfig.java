@@ -21,7 +21,6 @@ import controller.ActivityController;
 import controller.EntryformauditController;
 import controller.EntryitemController;
 import controller.NotificationController;
-import controller.QuestionController;
 import controller.UserController;
  
 public class MainConfig extends JFinalConfig {
@@ -40,7 +39,6 @@ public class MainConfig extends JFinalConfig {
     	me.add("/activity", ActivityController.class);
     	me.add("/entryitem", EntryitemController.class);
     	me.add("/user", UserController.class);
-    	me.add("/question", QuestionController.class);
     	me.add("/notification", NotificationController.class);
     	me.add("/entryformaudit", EntryformauditController.class);
     }
@@ -60,7 +58,6 @@ public class MainConfig extends JFinalConfig {
     	arp.addMapping("entryitem", entryitem.class);
     	arp.addMapping("organizer", organizer.class);
     	arp.addMapping("participant", participant.class);
-    	arp.addMapping("question", question.class);
     	arp.addMapping("entryform_audit", entryform_audit.class);
     	arp.addMapping("organizer_notification", organizer_notification.class);
     	arp.addMapping("participant_notification", participant_notification.class);

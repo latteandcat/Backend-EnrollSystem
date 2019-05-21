@@ -84,7 +84,7 @@ public class NotificationController extends Controller{
 		onoti.update();
 		renderJson("{\"status\":\"readSuccess\"}");
 	}
-	//添加报名审核未通过的消息
+	//添加报名审核通过的消息
 	public void notiPassSignup(){
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		int id = getParaToInt("id");
@@ -107,7 +107,7 @@ public class NotificationController extends Controller{
 		pnoti.save();
 		renderJson("{\"status\":\"addNotiSuccess\"}");		
 	}
-	//添加报名审核通过的消息
+	//添加报名审核未通过的消息
 	public void notiUnpassSignup(){
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		int id = getParaToInt("id");
@@ -129,6 +129,7 @@ public class NotificationController extends Controller{
 		pnoti.set("createtime",df.format(new Date()));
 		pnoti.set("hasread","no");
 		pnoti.save();
+		entryform_audit.dao.deleteById(id);
 		renderJson("{\"status\":\"addNotiSuccess\"}");		
 	}
 	//获取某报名者的未读通知

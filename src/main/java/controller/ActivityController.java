@@ -45,6 +45,14 @@ public class ActivityController extends Controller {
 		List<activity> res = activity.dao.find("select * from activity where deadline > '"+now+"' and isapproved = 'passed' order by deadline desc");
 		renderJson(res);
 	}
+	//获取所有正在进行中的活动
+	public void getSigninActivity(){
+		String organizer = getPara("organizer");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String now = df.format(new Date());
+		List<activity> res = activity.dao.find("select * from activity where starttime <= '"+now+"' and endtime >= '"+now+"' and organizer = '"+organizer+"'  and isapproved = 'passed'");
+		renderJson(res);
+	}
 	//条件查询可报名的活动
 	public void searchCouldSignupActivity(){
 		String select = getPara("select");
@@ -92,6 +100,8 @@ public class ActivityController extends Controller {
 		String site= getPara("site");
 		String detail= getPara("detail");
 		String isneedaudit = getPara("isneedaudit");
+		int number = getParaToInt("number");
+		double fee = Double.valueOf(getPara("fee"));
 		int length = getParaToInt("length");
 		String entryitems[] = new String[length];
 		for (int i = 0; i < entryitems.length; i++) {
@@ -120,6 +130,8 @@ public class ActivityController extends Controller {
 			a.set("isapproved", "tobeaudit");
 			a.set("isarchived", "unarchived");
 			a.set("submittime", df.format(new Date()));
+			a.set("fee", fee);
+			a.set("number", number);
 			a.save();
 			renderJson("{\"status\":\"addSuccess\"}");
 		}else{
@@ -134,6 +146,8 @@ public class ActivityController extends Controller {
 		String organization = getPara("organization");
 		String starttime = getPara("starttime");
 		String endtime= getPara("endtime");
+		int number = getParaToInt("number");
+		double fee = Double.valueOf(getPara("fee"));
 		String deadline= getPara("deadline");
 		String site= getPara("site");
 		String detail= getPara("detail");
@@ -152,6 +166,8 @@ public class ActivityController extends Controller {
 		a.set("deadline", parseDate(deadline));
 		a.set("site", site);
 		a.set("detail", detail);
+		a.set("fee", fee);
+		a.set("number", number);
 		a.set("isneedaudit", isneedaudit);
 		a.set("entryform", entryform);
 		a.set("submittime", df.format(new Date()));
@@ -198,5 +214,20 @@ public class ActivityController extends Controller {
 		a.set("submittime", df.format(new Date()));
 		a.update();
 		renderJson("{\"status\":\"reauditSuccess\"}");
+	}
+	//归档活动
+	public void archiveActivity(){
+		int id = getParaToInt("id");
+		activity a = activity.dao.findById(id);
+		a.set("isarchived", "archived");
+		a.update();
+		renderJson("{\"status\":\"archiveSuccess\"}");
+	}
+	//获取活动信息
+	public void getActivityInfo(){
+		String ac = getPara("activity");
+		String or = getPara("organizer");
+		activity a = activity.dao.findFirst("select * from activity where name = '"+ac+"' and organizer = '"+or+"'");
+		renderJson(a);
 	}
 }

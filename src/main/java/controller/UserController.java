@@ -131,10 +131,12 @@ public class UserController extends Controller{
 			renderJson("{\"status\":\"AlreadyExist\"}");
 		}
 	}
+	// 获取审核员list
 	public void adminList(){
 		List<admin> res= admin.dao.find("select * from admin where name != '安小狐SA'");
 		renderJson(res);
 	}
+	// 添加审核员
 	public void addAdmin() throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		String name = getPara("name");
 		String phone = getPara("phonenumber");
@@ -157,6 +159,7 @@ public class UserController extends Controller{
 			renderJson("{\"status\":\"alreadyExist\"}");
 		}
 	}
+	// 更新审核员信息
 	public void updateAdmin(){
 		int id = getParaToInt("id");
 		String name = getPara("name");
@@ -167,11 +170,13 @@ public class UserController extends Controller{
 		a.update();
 		renderJson("{\"status\":\"updateSuccess\"}");
 	}
+	// 查询审核员信息
 	public void searchAdmin(){
 		String name = getPara("name");
 		List<admin> ads = admin.dao.find("select * from admin where name like '%"+ name +"%' and name != '安小狐SA'");
 		renderJson(ads);
 	}
+	// 删除审核员
 	public void deleteAdmin(){
 		int id = getParaToInt("id");
 		admin.dao.deleteById(id);
@@ -322,6 +327,7 @@ public class UserController extends Controller{
 			renderJson("{\"status\":\"ERROR\"}");
 		}		
 	}
+	// 审核员修改用户密码
 	public void changeUserpwd() throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		String name = getPara("name");
 		String role = getPara("role");

@@ -135,6 +135,7 @@ public class EntryformauditController extends Controller{
 		List<entryform_audit> eas = entryform_audit.dao.find("select * from entryform_audit where activity = '"+ac+"' and organizer = '"+or+"' and (status = 'passed' or status = 'noneedAudit')");
 		renderJson(eas);
 	}
+	// 查询活动的报名信息
 	public void searchSignupofActivity(){
 		String pa = getPara("participant");
 		String ac = getPara("activity");
@@ -142,6 +143,7 @@ public class EntryformauditController extends Controller{
 		List<entryform_audit> eas = entryform_audit.dao.find("select * from entryform_audit where participant like '%"+pa+"%' and activity = '"+ac+"' and organizer = '"+or+"' and (status = 'passed' or status = 'noneedAudit')");
 		renderJson(eas);
 	}
+	// 为报名者签到
 	public void signinforParticipant(){
 		int id = getParaToInt("id");
 		entryform_audit ea = entryform_audit.dao.findById(id);

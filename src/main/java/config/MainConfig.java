@@ -7,7 +7,6 @@ import model.organizer;
 import model.organizer_notification;
 import model.participant;
 import model.participant_notification;
-import model.question;
 
 import com.jfinal.config.*;
 import com.jfinal.kit.PropKit;

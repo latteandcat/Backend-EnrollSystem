@@ -39,7 +39,7 @@ public class EntryformauditController extends Controller{
 		}
 		List<entryform_audit> eas = entryform_audit.dao.find("select * from entryform_audit where activity = '"+a.getStr("name")+"' and participant = '"+pname+"' and organizer = '"+a.getStr("organizer")+"'");
 		int number = a.getInt("number");
-		List<entryform_audit> eaofa = entryform_audit.dao.find("select * from entryform_audit where activity = '"+a.getStr("name")+"' and organizer = '"+a.getStr("organizer")+"'");
+		List<entryform_audit> eaofa = entryform_audit.dao.find("select * from entryform_audit where activity = '"+a.getStr("name")+"' and organizer = '"+a.getStr("organizer")+"' and (status = 'passed' or status = 'noneedAudit') ");
 		if(eaofa.size() < number) {
 			if(eas.isEmpty()){
 				entryform_audit ea = getModel(entryform_audit.class);
